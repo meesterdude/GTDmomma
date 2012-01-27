@@ -27,10 +27,8 @@ end
 
 def email_alert(task)
 
-  p "b"
-
 end
 
 def text_alert(task)
- p "c"
+
 end

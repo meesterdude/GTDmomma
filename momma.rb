@@ -16,14 +16,12 @@ unless data.to_s.include? "No Results"
     data.each do |line|
         data_a += [line.split(',')]
     end
-  @result_hash = hash_from_arrs(headers,data_a)
+  result_hash = hash_from_arrs(headers,data_a)
 
-   # puts @result_hash.to_yaml
-  @result_hash.each do |t|
+  result_hash.each do |t|
     hours = t[1]["due_hours_ago"]
-    name  = t[1]["name"]
     case
-    when hours <= 300
+    when hours <= 3
       local_alert(t)
     when hours <= 5
       email_alert(t)
