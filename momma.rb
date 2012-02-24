@@ -3,10 +3,13 @@ require 'yaml'
 require 'date'
 require 'time'
 # files
-require 'config'
-require 'lib'
+require File.join(File.dirname(__FILE__), 'config')
+require File.join(File.dirname(__FILE__), 'lib')
 
 runcommand =%x[#{AQL_COMMAND} #{AQL_QUERY}]
+
+idletime = %x[ioreg -c IOHIDSystem | awk '/HIDIdleTime/ {print $NF/1000000000; exit}'].to_i.round
+p idletime
 headers = AQL_SELECTION.split ','
 data = runcommand.chomp.split "\n"
 
@@ -21,11 +24,13 @@ unless data.to_s.include? "No Results"
   result_hash.each do |t|
     hours = t[1]["due_hours_ago"]
     case
-    when hours <= 3
+    when hours <= 8
+      unless (idletime >= 600)
       local_alert(t)
-    when hours <= 5
+      end
+    when hours <= 16
       email_alert(t)
-    when hours >= 6
+    when hours >= 24
       text_alert(t)
     end
   end
