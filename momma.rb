@@ -8,8 +8,7 @@ require File.join(File.dirname(__FILE__), 'lib')
 
 runcommand =%x[#{AQL_COMMAND} #{AQL_QUERY}]
 
-idletime = %x[ioreg -c IOHIDSystem | awk '/HIDIdleTime/ {print $NF/1000000000; exit}'].to_i.round
-p idletime
+
 headers = AQL_SELECTION.split ','
 data = runcommand.chomp.split "\n"
 
@@ -20,7 +19,8 @@ unless data.to_s.include? "No Results"
         data_a += [line.split(',')]
     end
   result_hash = hash_from_arrs(headers,data_a)
-
+  
+  idletime = %x[ioreg -c IOHIDSystem | awk '/HIDIdleTime/ {print $NF/1000000000; exit}'].to_i.round
   result_hash.each do |t|
     hours = t[1]["due_hours_ago"]
     case
